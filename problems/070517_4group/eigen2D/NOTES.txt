@@ -1,0 +1,1 @@
+ Seems that k~= 0.79 for NEWT. Maybe this is very subcritical due to reactor dimension.
