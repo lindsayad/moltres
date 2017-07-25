@@ -16,7 +16,7 @@
 
 [Kernels]
   [./diff]
-    type = Diffusion
+    type = MatDiffusion
     variable = diffused
   [../]
 []
@@ -34,6 +34,29 @@
     variable = diffused
     boundary = 'top'
     value = 0
+  [../]
+  [./left]
+    type = DirichletBC
+    variable = diffused
+    boundary = 'left'
+    value = 1
+  [../]
+  [./right]
+    type = DirichletBC
+    variable = diffused
+    boundary = 'right'
+    value = 0
+  [../]
+[]
+
+[Materials]
+  [./blockDiffusivity]
+    type = DerivativeParsedMaterial
+    block = '0'
+    f_name = diffusivity
+    function  = '1.0 + 0.01 * x'
+    args = diffused
+    derivative_order = 1
   [../]
 []
 
