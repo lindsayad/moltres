@@ -1,8 +1,7 @@
 [Mesh]
   type = GeneratedMesh
-  dim = 2
+  dim = 1
   nx = 1
-  ny = 1
 []
 
 [Variables]
@@ -21,19 +20,6 @@
 []
 
 [BCs]
-  [./bottom]
-    type = DirichletBC
-    variable = diffused
-    boundary = 'bottom'
-    value = 1
-  [../]
-
-  [./top]
-    type = DirichletBC
-    variable = diffused
-    boundary = 'top'
-    value = 0
-  [../]
   [./left]
     type = DirichletBC
     variable = diffused
@@ -75,14 +61,4 @@
 [Outputs]
   execute_on = 'timestep_end'
   exodus = true
-[]
-
-[MultiApps]
-  [./loopApp]
-    type = TransientMultiApp
-    app_type = MoltresApp
-    execute_on = timestep_begin
-    positions = '0 0 0.0'
-    input_files = 'sub_simple.i'
-  [../]
 []
