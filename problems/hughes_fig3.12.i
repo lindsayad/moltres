@@ -1,46 +1,42 @@
-k_coeff = 1
+k_coeff = 0
+vel = 1
 
 [Mesh]
   type = GeneratedMesh
-  nx = 999
+  xmax = 100
+  nx = 101
   dim = 1
 []
 
 [Kernels]
-  [./source]
-    type = UserForcingFunction
-    variable = u
-    function = 'forcing_func'
-  [../]
   [./convection]
-    type = ConservativeAdvection
+    type = NonConservativeAdvection
     variable = u
-    velocity = '200 0 0'
-  [../]
-  [./diffusion]
-    type = MatDiffusion
-    variable = u
-    D_name = 'k'
+    velocity = '${vel} 0 0'
   [../]
   [./supg]
     type = AdvectionSUPG
     variable = u
     D_name = 'k'
-    velocity = '200 0 0'
+    velocity = '${vel} 0 0'
   [../]
+  [./time]
+    type = TimeDerivative
+    variable = u
+  [../]
+  # [./time_supg]
+  #   type = TimeDerivativeSUPG
+  #   velocity = '${vel} 0 0'
+  #   D_name = 'k'
+  #   variable = u
+  # [../]
 []
 
 [BCs]
-  # [./outflow]
-  #   type = OutflowBC
-  #   boundary = 'left right'
-  #   variable = u
-  #   velocity = '1 0 0'
-  # [../]
   [./diri]
     type = DirichletBC
     value = 0
-    boundary = 'left right'
+    boundary = 'left'
     variable = u
   [../]
 []
@@ -65,12 +61,18 @@ k_coeff = 1
 []
 
 [Executioner]
-  type = Steady
+  type = Transient
   petsc_options = '-snes_converged_reason -ksp_converged_reason -snes_linesearch_monitor'
-  petsc_options_iname = '-pc_type -sub_pc_type -sub_ksp_type'
-  petsc_options_value = 'asm      lu           preonly'
-
-  solve_type = 'NEWTON'
+  petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -snes_linesearch_minlambda'
+  petsc_options_value = 'lu NONZERO 1e-10 1e-3'
+  [./TimeIntegrator]
+    type = CrankNicolson
+  [../]
+  nl_max_its = 20
+  l_max_its = 30
+  solve_type = 'PJFNK'
+  dt = 0.5
+  num_steps = 200
 []
 
 [Preconditioning]
@@ -81,9 +83,18 @@ k_coeff = 1
 []
 
 [Functions]
-  [./forcing_func]
+  [./ini_func]
     type = ParsedFunction
-    value = 'x^2'
+    # value = 'x^2'
+    value = 'if(x < 20, sin(pi * x / 20), 0)'
+  [../]
+[]
+
+[ICs]
+  [./u]
+    type = FunctionIC
+    function = 'ini_func'
+    variable = u
   [../]
 []
 

@@ -157,7 +157,7 @@ diri_temp=922
   [../]
   [./cRod]
     type = RoddedMaterial
-    property_tables_root = '../../tutorial/step01_groupConstants/MSREProperties/msre_gentry_4gmoder_'
+    property_tables_root = '../../../tutorial/step01_groupConstants/MSREProperties/msre_gentry_4gmoder_'
     interp_type = 'spline'
     prop_names = 'k cp'
     prop_values = '.312 1760' # Cammi 2011 at 908 K

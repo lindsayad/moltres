@@ -1,8 +1,10 @@
-k_coeff = 1
+k_coeff = 0
+vel = 1
 
 [Mesh]
   type = GeneratedMesh
-  nx = 999
+  xmax = 15
+  nx = 15
   dim = 1
 []
 
@@ -12,21 +14,28 @@ k_coeff = 1
     variable = u
     function = 'forcing_func'
   [../]
+  # [./source_supg]
+  #   type = UserForcingFunctionSUPG
+  #   variable = u
+  #   function = 'forcing_func'
+  #   velocity = '${vel} 0 0'
+  #   D_name = 'k'
+  # [../]
   [./convection]
-    type = ConservativeAdvection
+    type = NonConservativeAdvection
     variable = u
-    velocity = '200 0 0'
+    velocity = '${vel} 0 0'
   [../]
-  [./diffusion]
-    type = MatDiffusion
-    variable = u
-    D_name = 'k'
-  [../]
+  # [./diffusion]
+  #   type = MatDiffusion
+  #   variable = u
+  #   D_name = 'k'
+  # [../]
   [./supg]
     type = AdvectionSUPG
     variable = u
     D_name = 'k'
-    velocity = '200 0 0'
+    velocity = '${vel} 0 0'
   [../]
 []
 
@@ -40,7 +49,7 @@ k_coeff = 1
   [./diri]
     type = DirichletBC
     value = 0
-    boundary = 'left right'
+    boundary = 'left'
     variable = u
   [../]
 []
@@ -67,10 +76,14 @@ k_coeff = 1
 [Executioner]
   type = Steady
   petsc_options = '-snes_converged_reason -ksp_converged_reason -snes_linesearch_monitor'
-  petsc_options_iname = '-pc_type -sub_pc_type -sub_ksp_type'
-  petsc_options_value = 'asm      lu           preonly'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'asm'
+  # petsc_options_iname = '-pc_type -pc_factor_shift_type -pc_factor_shift_amount -snes_linesearch_minlambda'
+  # petsc_options_value = 'lu NONZERO 1e-10 1e-3'
+  nl_max_its = 20
+  l_max_its = 30
 
-  solve_type = 'NEWTON'
+  solve_type = 'PJFNK'
 []
 
 [Preconditioning]
@@ -83,7 +96,8 @@ k_coeff = 1
 [Functions]
   [./forcing_func]
     type = ParsedFunction
-    value = 'x^2'
+    # value = 'x^2'
+    value = 'if(x < 6, 1 - .25*x, if(x < 8, -2 + .25*x, 0))'
   [../]
 []
 
