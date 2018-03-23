@@ -111,6 +111,7 @@ void
 MoltresApp::registerApps()
 {
   registerApp(MoltresApp);
+  registerApp(SquirrelApp);
 }
 
 // External entry point for dynamic object registration
