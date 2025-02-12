@@ -37,7 +37,7 @@ blockquote {
 }
 
 .moose-parameter-name{
-    color:var(--uiuc-blue);
+    color:var(--uiuc-second-blue);
 }
 
 nav,
@@ -67,4 +67,11 @@ footer.page-footer{
 .dropdown-content li > a, .dropdown-content li > span {
     color: var(--uiuc-blue);
     font-weight:400;
+}
+
+@media (prefers-color-scheme: dark), (prefers-dark-interface) {
+ .dropdown-content li > a, .dropdown-content li > span {
+  background-color: var(--darkmode-navigator);
+  color: var(--darkmode-fore);
+ }
 }
